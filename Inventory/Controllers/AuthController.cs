@@ -23,7 +23,7 @@ namespace Inventory.Controllers
             _userRepository = userRepository;
             _mapper = mapper;
         }
-
+         //comment
         [HttpGet]
         public IActionResult Get()
         {

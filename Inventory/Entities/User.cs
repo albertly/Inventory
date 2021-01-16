@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Inventory.Models
+namespace Inventory.Entities
 {
     public class User
     {
@@ -30,5 +30,7 @@ namespace Inventory.Models
         [Required]
         [MaxLength(500)]
         public string Password { get; set; }
+
+        public ICollection<Claim> Claims { get; set; } = new List<Claim>();
     }
 }

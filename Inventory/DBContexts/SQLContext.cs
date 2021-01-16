@@ -1,4 +1,5 @@
 ﻿using Inventory.Models;
+using Inventory.Entities;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -15,5 +16,7 @@ namespace Inventory.DBContexts
         }
 
         public DbSet<User> Users { get; set; }
+
+        public DbSet<Claim> Claims { get; set; }
     }
 }

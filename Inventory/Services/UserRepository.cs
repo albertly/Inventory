@@ -1,5 +1,6 @@
 ﻿using Inventory.DBContexts;
 using Inventory.Models;
+using Inventory.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using System;
@@ -16,6 +17,22 @@ namespace Inventory.Services
         public UserRepository(SQLContext context)
         {
             _context = context ?? throw new ArgumentNullException(nameof(context));
+        }
+
+        public void AddClaim(string userId, Claim claim)
+        {
+            if (String.IsNullOrWhiteSpace(userId))
+            {
+                throw new ArgumentNullException(nameof(userId));
+            }
+
+            if (claim == null)
+            {
+                throw new ArgumentNullException(nameof(claim));
+            }
+            
+            claim.UserId = userId;
+            _context.Claims.Add(claim);
         }
 
         public void AddUser(User user)
@@ -47,6 +64,22 @@ namespace Inventory.Services
             throw new NotImplementedException();
         }
 
+        public Claim GetClaim(string userId, Guid claimId)
+        {
+            if (String.IsNullOrWhiteSpace(userId))
+            {
+                throw new ArgumentNullException(nameof(userId));
+            }
+
+            if (claimId == Guid.Empty)
+            {
+                throw new ArgumentNullException(nameof(claimId));
+            }
+
+            return _context.Claims
+              .Where(c => c.UserId == userId && c.Id == claimId).FirstOrDefault();
+        }
+
         public User GetUser(string userId)
         {
             //return _context.Users.Where<User>(u => u.Id == userId);
@@ -68,6 +101,15 @@ namespace Inventory.Services
             throw new NotImplementedException();
         }
 
+        public bool UserExists(string userId)
+        {
+            if (String.IsNullOrWhiteSpace(userId))
+            {
+                throw new ArgumentNullException(nameof(userId));
+            }
+
+            return _context.Users.Any(u => u.Id == userId);
+        }
 
         public bool varifuUserPassword(AuthModel authModel)
         {

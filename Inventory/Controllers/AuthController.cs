@@ -66,6 +66,7 @@ namespace Inventory.Controllers
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
+            
             //----------------------------------------------------------------------
             string token = _auth.GenerateToken(new JWTContainerModel
             {
@@ -73,7 +74,8 @@ namespace Inventory.Controllers
                 Claims = new Claim[]
                 {
                    // new Claim(ClaimTypes.Name, name),
-                    new Claim(ClaimTypes.Email, email)
+                    new Claim(ClaimTypes.Email, email),
+                    new Claim("MyRole", "role")
                 }
 
             });

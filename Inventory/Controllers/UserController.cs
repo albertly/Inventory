@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Inventory.Models;
+using Inventory.Entities;
 using Inventory.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;

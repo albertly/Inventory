@@ -1,4 +1,5 @@
 ﻿using Inventory.Models;
+using Inventory.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,5 +21,11 @@ namespace Inventory.Services
         bool Save();
 
         bool varifuUserPassword(AuthModel authModel);
+
+        void AddClaim(string userId, Claim claim);
+
+        bool UserExists(string userId);
+
+        Claim GetClaim(string userId, Guid claimId);
     }
 }

@@ -37,7 +37,7 @@ namespace Inventory.Services
 
             return token;
         }
-
+        
         public IEnumerable<Claim> GetTokenClaims(string token)
         {
             throw new NotImplementedException();

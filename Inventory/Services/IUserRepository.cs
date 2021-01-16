@@ -18,5 +18,7 @@ namespace Inventory.Services
 
         void DeleteUser(string userId);
         bool Save();
+
+        bool varifuUserPassword(AuthModel authModel);
     }
 }

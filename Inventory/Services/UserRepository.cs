@@ -67,5 +67,45 @@ namespace Inventory.Services
         {
             throw new NotImplementedException();
         }
+
+
+        public bool varifuUserPassword(AuthModel authModel)
+        {
+
+            if (authModel == null)
+            {
+                throw new ArgumentNullException(nameof(authModel));
+            }
+            PasswordVerificationResult retVar;
+            AuthModel userInfo;
+
+            //user = _context.Users.FirstOrDefault<User>(u => u.Email == authModel.eMail);
+            //Get login user password from DB
+            userInfo= _context.Users.Where(u => u.Email == authModel.eMail).Select(u => new AuthModel
+            {
+                eMail = u.Email,
+                Password = u.Password
+                
+            }).SingleOrDefault();
+            if (userInfo == null) return false;
+
+            OptionsWrapper<PasswordHasherOptions> options = new OptionsWrapper<PasswordHasherOptions>(new PasswordHasherOptions
+            {
+                CompatibilityMode = PasswordHasherCompatibilityMode.IdentityV3,
+            });
+
+            PasswordHasher<AuthModel> hasher = new PasswordHasher<AuthModel>(options);
+            //compare 2 password
+            retVar = hasher.VerifyHashedPassword(authModel, userInfo.Password, authModel.Password);
+
+            if (retVar == PasswordVerificationResult.Success)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
     }
 }

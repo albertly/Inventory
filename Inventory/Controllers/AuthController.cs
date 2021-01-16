@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Inventory.Models;
 using Inventory.Services;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -16,12 +17,11 @@ namespace Inventory.Controllers
     {
         private readonly IAuthService _auth;
         private readonly IUserRepository _userRepository;
-        private readonly IMapper _mapper;
-        public AuthController(IAuthService auth, IUserRepository userRepository, IMapper mapper)
+
+        public AuthController(IAuthService auth, IUserRepository userRepository)
         {
             _auth = auth;
             _userRepository = userRepository;
-            _mapper = mapper;
         }
          //comment
         [HttpGet]
@@ -36,53 +36,51 @@ namespace Inventory.Controllers
             return _auth.IsTokenValid(token.Token);
         }
 
-        [HttpPost("JWT")]
-        public string JWT([FromBody] AuthModel auth)
+        [HttpPost("Login")]
+        public ActionResult  Login([FromBody] AuthModel auth)
         {
-            var name = auth.UserName;
-            var email = "albert@yande.ru";
+            bool UserAuthenticate = false;
+            if (auth == null)
+            {
+                return NotFound();
+            }
 
+            var email = auth.eMail;
+            //var password = auth.Password;
+
+            if (auth.Password.Length==0)
+            { 
+                return NotFound();
+            }
+
+            //Varify user password if DB request error then return Status500
+            try
+            {
+                UserAuthenticate = _userRepository.varifuUserPassword(auth);
+                if (UserAuthenticate == false)
+                {
+                    return StatusCode(StatusCodes.Status401Unauthorized);
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+            //----------------------------------------------------------------------
             string token = _auth.GenerateToken(new JWTContainerModel
             {
                 ExpireMinutes = 3600,
                 Claims = new Claim[]
                 {
-                    new Claim(ClaimTypes.Name, name),
+                   // new Claim(ClaimTypes.Name, name),
                     new Claim(ClaimTypes.Email, email)
                 }
 
             });
 
-            return token;
+            return Ok(token);
         }
 
-        [HttpPost("User")]
-        public ActionResult<UserDto> AddUser([FromBody] UserForCreationDto userCDto)
-        {
-            var user = _mapper.Map<User>(userCDto);
-
-            _userRepository.AddUser(user);
-            _userRepository.Save();
-
-            var userDto = _mapper.Map<UserDto>(user);
-
-            return CreatedAtRoute("GetUser", new { Id = user.Id }, userDto);
-        }
-
-        [HttpGet("User", Name = "GetUser")]
-        public ActionResult<UserDto> GetUser([FromQuery] string Id)
-        {
-            var user = _userRepository.GetUser(Id);
-
-            if (user == null)
-            {
-                return NotFound();
-            }
-
-            var userDto = _mapper.Map<UserDto>(user);
-
-            
-            return Ok(userDto);
-        }
+      
     }
 }

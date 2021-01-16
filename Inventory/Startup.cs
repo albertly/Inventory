@@ -33,10 +33,11 @@ namespace Inventory
 
             services.AddDbContext<SQLContext>(options =>
             {
-                options.UseSqlServer(
-                    @"Server=(localdb)\mssqllocaldb;Database=InventoryDB;Trusted_Connection=True;");
+                //options.UseSqlServer(@"Server=(localdb)\mssqllocaldb;Database=InventoryDB;Trusted_Connection=True;");
+                //options.UseSqlServer(Configuration.GetConnectionString("albertConString"))
+                options.UseSqlServer(Configuration.GetConnectionString("dudiConString"));
             });
-
+            
             services.AddControllers();
             services.AddSwaggerGen(c => 
             {

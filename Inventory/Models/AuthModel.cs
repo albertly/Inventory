@@ -10,7 +10,7 @@ namespace Inventory.Models
     {
         [Required]
         [MaxLength(50)]
-        public string UserName { get; set; }
+        public string eMail { get; set; }
 
         [Required]
         [MaxLength(8)]

@@ -23,7 +23,7 @@ namespace Inventory.Controllers
             _auth = auth;
             _userRepository = userRepository;
         }
-         //comment
+        //comment
         [HttpGet]
         public IActionResult Get()
         {
@@ -37,7 +37,7 @@ namespace Inventory.Controllers
         }
 
         [HttpPost("Login")]
-        public ActionResult  Login([FromBody] AuthModel auth)
+        public ActionResult Login([FromBody] AuthModel auth)
         {
             bool UserAuthenticate = false;
             if (auth == null)
@@ -48,8 +48,8 @@ namespace Inventory.Controllers
             var email = auth.eMail;
             //var password = auth.Password;
 
-            if (auth.Password.Length==0)
-            { 
+            if (auth.Password.Length == 0)
+            {
                 return NotFound();
             }
 
@@ -66,7 +66,7 @@ namespace Inventory.Controllers
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
-            
+
             //----------------------------------------------------------------------
             string token = _auth.GenerateToken(new JWTContainerModel
             {
@@ -75,7 +75,7 @@ namespace Inventory.Controllers
                 {
                    // new Claim(ClaimTypes.Name, name),
                     new Claim(ClaimTypes.Email, email),
-                    new Claim("MyRole", "role")
+                    new Claim("Job", "CTO")
                 }
 
             });
@@ -83,6 +83,6 @@ namespace Inventory.Controllers
             return Ok(token);
         }
 
-      
+
     }
 }

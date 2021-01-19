@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 
 namespace Inventory.Services
 {
@@ -15,7 +16,7 @@ namespace Inventory.Services
         private readonly SQLContext _context;
 
         public UserRepository(SQLContext context)
-        {
+        {            
             _context = context ?? throw new ArgumentNullException(nameof(context));
         }
 
@@ -64,7 +65,7 @@ namespace Inventory.Services
             throw new NotImplementedException();
         }
 
-        public Claim GetClaim(string userId, Guid claimId)
+        public async Task<Claim> GetClaim(string userId, Guid claimId)
         {
             if (String.IsNullOrWhiteSpace(userId))
             {
@@ -76,13 +77,15 @@ namespace Inventory.Services
                 throw new ArgumentNullException(nameof(claimId));
             }
 
-            return _context.Claims
-              .Where(c => c.UserId == userId && c.Id == claimId).FirstOrDefault();
+                        
+            return await _context.Claims
+              .Where(c => c.UserId == userId && c.Id == claimId).FirstOrDefaultAsync();
         }
 
         public User GetUser(string userId)
         {
-            //return _context.Users.Where<User>(u => u.Id == userId);
+           // var f = _context.Users.Where<User>(u => u.Id == userId).ToListAsync<User>();
+            
             return _context.Users.FirstOrDefault<User>(u => u.Id == userId);
         }
 
@@ -93,12 +96,27 @@ namespace Inventory.Services
 
         public bool Save()
         {
+            _context.Database.
             return (_context.SaveChanges() >= 0);
         }
 
+        public async Task<bool> SaveAsync()
+        {
+            return ( await _context.SaveChangesAsync() >= 0);
+        }
         public void UpdateUser(User user)
         {
             throw new NotImplementedException();
+        }
+
+        public async Task<bool> UserExistsAsync(string userId)
+        {
+            if (String.IsNullOrWhiteSpace(userId))
+            {
+                throw new ArgumentNullException(nameof(userId));
+            }
+
+            return await _context.Users.AnyAsync(u => u.Id == userId);
         }
 
         public bool UserExists(string userId)
@@ -110,7 +128,6 @@ namespace Inventory.Services
 
             return _context.Users.Any(u => u.Id == userId);
         }
-
         public bool varifuUserPassword(AuthModel authModel)
         {
 

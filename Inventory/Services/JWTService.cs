@@ -28,7 +28,10 @@ namespace Inventory.Services
             {
                 Subject = new ClaimsIdentity(model.Claims),
                 Expires = DateTime.UtcNow.AddMinutes(Convert.ToInt32(model.ExpireMinutes)),
-                SigningCredentials = new SigningCredentials(GetSymmetricSecurityKey(), model.SecurityAlgorithm)
+                SigningCredentials = new SigningCredentials(GetSymmetricSecurityKey(), model.SecurityAlgorithm),
+                Issuer = "ShagrirIdentityProvider",
+                Audience = "InventoryAPI",
+
             };
 
             JwtSecurityTokenHandler jwtSecurityTokenHandler = new JwtSecurityTokenHandler();
@@ -63,12 +66,18 @@ namespace Inventory.Services
             }
         }
 
-        private TokenValidationParameters GetTokenValidationParameters()
+        public TokenValidationParameters GetTokenValidationParameters()
         {
             return new TokenValidationParameters()
-            {                
-                ValidateIssuer = false,
-                ValidateAudience = false,                
+            {
+                ValidateIssuer = true,
+                ValidateAudience = true,
+                ValidateLifetime = true,
+                ValidateIssuerSigningKey = true,
+
+                ValidIssuer = "ShagrirIdentityProvider",
+                ValidAudience = "InventoryAPI",
+
                 IssuerSigningKey = GetSymmetricSecurityKey()
             };
         }

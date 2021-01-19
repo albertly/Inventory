@@ -19,13 +19,15 @@ namespace Inventory.Services
 
         void DeleteUser(string userId);
         bool Save();
+        Task<bool> SaveAsync();
 
         bool varifuUserPassword(AuthModel authModel);
 
         void AddClaim(string userId, Claim claim);
 
+        Task<bool> UserExistsAsync(string userId);
         bool UserExists(string userId);
 
-        Claim GetClaim(string userId, Guid claimId);
+        Task<Claim> GetClaim(string userId, Guid claimId);
     }
 }

@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 
 namespace Inventory.Controllers
 {
@@ -21,12 +22,13 @@ namespace Inventory.Controllers
 
         public ClaimController(IUserRepository userRepository, IMapper mapper)
         {
+            
             _userRepository = userRepository;
             _mapper = mapper;
         }
 
         [HttpPost]
-        public ActionResult<ClaimDto> CreateClaimForUser(string userId,ClaimForCreationDto claim)
+        public async Task<ActionResult<ClaimDto>> CreateClaimForUser(string userId,ClaimForCreationDto claim)
         {
             if (!_userRepository.UserExists(userId))
             {
@@ -35,7 +37,7 @@ namespace Inventory.Controllers
 
             var claimEntity = _mapper.Map<Entities.Claim>(claim);
             _userRepository.AddClaim(userId, claimEntity);
-            _userRepository.Save();
+            await _userRepository.SaveAsync();
 
             var claimToReturn = _mapper.Map<ClaimDto>(claimEntity);
             return CreatedAtRoute("GetClaimForUser",
@@ -45,14 +47,14 @@ namespace Inventory.Controllers
 
         //http://localhost:5000/api/users/18/claim/1823-32423432-432343
         [HttpGet("{claimId}", Name = "GetClaimForUser")]
-        public ActionResult<ClaimDto> GetClaimForUser(string userId, Guid claimId)
+        public async Task<ActionResult<ClaimDto>> GetClaimForUser(string userId, Guid claimId)
         {
-            if (!_userRepository.UserExists(userId))
+            if (! await _userRepository.UserExistsAsync(userId))
             {
                 return NotFound();
             }
 
-            var claim = _userRepository.GetClaim(userId, claimId);
+            var claim = await _userRepository.GetClaim(userId, claimId);
 
             if (claim == null)
             {

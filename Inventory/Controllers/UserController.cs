@@ -8,6 +8,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace Inventory.Controllers
 {
@@ -40,6 +42,9 @@ namespace Inventory.Controllers
             return CreatedAtRoute("GetUser", new { Id = user.Id }, userDto);
         }
 
+
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
+            Policy = "Manager")]
         [HttpGet("User", Name = "GetUser")]
         public ActionResult<UserDto> GetUser([FromQuery] string Id)
         {

@@ -9,9 +9,10 @@ namespace Inventory.Services
 {
     public interface IUserRepository
     {
-        IEnumerable<User> GetUsers();
 
         User GetUser(string userId);
+
+        Task<IEnumerable<User>> GetUsers(string search);
 
         void AddUser(User user);
 

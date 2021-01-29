@@ -43,6 +43,25 @@ namespace Inventory.Controllers
         }
 
 
+        [HttpGet("Users", Name = "GetUsers")]
+        public async Task<ActionResult<IEnumerable<UserDto>>> GetUsers([FromQuery] string search)
+        {
+
+            var users = await _userRepository.GetUsers(search);
+
+            if (users == null)
+            {
+                return NotFound();
+            }
+
+            var usersDto = _mapper.Map<IEnumerable<UserDto>>(users);
+
+
+            return Ok(usersDto);
+        }
+
+
+
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
             Policy = "Manager")]
         [HttpGet("User", Name = "GetUser")]

@@ -89,14 +89,25 @@ namespace Inventory.Services
             return _context.Users.FirstOrDefault<User>(u => u.Id == userId);
         }
 
-        public IEnumerable<User> GetUsers()
+        public  async Task<IEnumerable<User>> GetUsers(string search)
         {
-            throw new NotImplementedException();
+            //byte[] mybyte = { 12, 12, 45 };
+            //List<byte> mylbyte = new List<byte> { 12, 23 };
+            //mylbyte.Add(34);
+
+            if (String.IsNullOrWhiteSpace(search))
+            {
+                return await _context.Users.Select(x => x).ToListAsync();
+            }
+            else
+            {
+                return await _context.Users.Where(x => x.FirstName.Contains(search)).ToListAsync();
+            }
+
         }
 
         public bool Save()
-        {
-            _context.Database.
+        {            
             return (_context.SaveChanges() >= 0);
         }
 

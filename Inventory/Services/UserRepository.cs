@@ -82,6 +82,11 @@ namespace Inventory.Services
               .Where(c => c.UserId == userId && c.Id == claimId).FirstOrDefaultAsync();
         }
 
+        public async Task<IEnumerable<Claim>> GetClaimsAsync (IEnumerable<Guid> claimsIds)
+        {
+            return await _context.Claims.Where(c => claimsIds.Contains(c.Id)).ToListAsync();
+        }
+
         public User GetUser(string userId)
         {
            // var f = _context.Users.Where<User>(u => u.Id == userId).ToListAsync<User>();
@@ -103,6 +108,13 @@ namespace Inventory.Services
             {
                 return await _context.Users.Where(x => x.FirstName.Contains(search)).ToListAsync();
             }
+
+        }
+
+        public async Task<IEnumerable<User>> GetUsersWithClaims()
+        {
+
+                return await _context.Users.Include(u => u.Claims).ToListAsync();
 
         }
 

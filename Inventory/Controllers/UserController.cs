@@ -61,6 +61,30 @@ namespace Inventory.Controllers
         }
 
 
+        [HttpGet("UsersClaims", Name = "GetUsersClaims")]
+        public async Task<ActionResult<IEnumerable<User>>> GetUsersClaims()
+        {
+
+            var users = await _userRepository.GetUsersWithClaims();
+
+            if (users == null)
+            {
+                return NotFound();
+            }
+
+            //var usersDto = _mapper.Map<IEnumerable<UserDto>>(users);
+
+            foreach (var user in users)
+            {
+                foreach (var claim in user.Claims)
+                {
+                    claim.User = null;
+                }
+            }
+
+            return Ok(users);
+        }
+
 
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
             Policy = "Manager")]

@@ -14,6 +14,8 @@ namespace Inventory.Services
 
         Task<IEnumerable<User>> GetUsers(string search);
 
+        Task<IEnumerable<User>> GetUsersWithClaims();
+
         void AddUser(User user);
 
         void UpdateUser(User user);
@@ -28,6 +30,8 @@ namespace Inventory.Services
 
         Task<bool> UserExistsAsync(string userId);
         bool UserExists(string userId);
+
+        Task<IEnumerable<Claim>> GetClaimsAsync(IEnumerable<Guid> claimsIds);
 
         Task<Claim> GetClaim(string userId, Guid claimId);
     }
